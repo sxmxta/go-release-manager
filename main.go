@@ -22,12 +22,11 @@ func main() {
 	// 全局初始化
 	wvApp := wv.Init(nil, nil)
 	wvApp.SetOptions(application.Options{
-		Frameless: true,
-		//DisableResize: true,
-		//DisableContextMenu: true,
-		Caption:    "Release Manager",
-		DefaultURL: "fs://energy/index.html",
-		//DefaultURL: "https://www.baidu.com",
+		Frameless:          true,
+		DisableResize:      true,
+		DisableContextMenu: true,
+		Caption:            "Go Release Manager",
+		DefaultURL:         "fs://energy/index.html",
 	})
 	wvApp.SetLocalLoad(application.LocalLoad{
 		Scheme:     "fs",
