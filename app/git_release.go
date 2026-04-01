@@ -531,6 +531,12 @@ func executeRootRelease(repo RepoConfig, scan repoScan, tag string, pushRemote b
 	pushed := false
 	if pushRemote {
 		if err := pushGitTag(repo.LocalDir, tag); err != nil {
+			emitOperationLogf("warn", "%s 推送根标签 %s 失败，将删除本地标签以允许下次重试", repo.Name, tag)
+			if delErr := deleteGitTag(repo.LocalDir, tag); delErr != nil {
+				emitOperationLogf("error", "%s 删除本地标签 %s 失败：%v", repo.Name, tag, delErr)
+			} else {
+				emitOperationLogf("info", "%s 已删除本地标签 %s，下次运行可重新创建", repo.Name, tag)
+			}
 			return ReleaseStep{}, fmt.Errorf("%s 推送根标签 %s 到 origin 失败: %w", repo.Name, tag, err)
 		}
 		pushed = true
@@ -603,6 +609,14 @@ func executeDependentRelease(repo RepoConfig, scan repoScan, tag string, version
 	pushed := false
 	if pushRemote {
 		if err := pushBranchAndTagAtomic(repo.LocalDir, branch, tag); err != nil {
+			// 推送失败后删除本地标签
+			emitOperationLogf("warn", "%s 推送分支 %s 与标签 %s 失败，将回滚本地变更以允许下次重试", repo.Name, branch, tag)
+			// 删除标签
+			if delErr := deleteGitTag(repo.LocalDir, tag); delErr != nil {
+				emitOperationLogf("error", "%s 删除本地标签 %s 失败：%v", repo.Name, tag, delErr)
+			} else {
+				emitOperationLogf("info", "%s 已删除本地标签 %s", repo.Name, tag)
+			}
 			return ReleaseStep{}, fmt.Errorf("%s 推送分支 %s 与标签 %s 到 origin 失败: %w", repo.Name, branch, tag, err)
 		}
 		pushed = true
