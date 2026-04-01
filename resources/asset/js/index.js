@@ -321,8 +321,8 @@ window.onload = () => {
                             <span class="repo-name">${escapeHtml(repo.name)}</span>
                             <span class="repo-status ${statusClass}">${statusText}</span>
                         </div>
-                        <div class="repo-pending status" aria-label="当前分枝">BR: ${escapeHtml(currentBranchDisplay)}</div>
-                        <div class="repo-pending status" aria-label="最新标签">TAG: ${escapeHtml(latestTagDisplay)}</div>
+                        <div class="repo-pending status" aria-label="当前分枝">br: ${escapeHtml(currentBranchDisplay)}</div>
+                        <div class="repo-pending status" aria-label="最新标签">tag: ${escapeHtml(latestTagDisplay)}</div>
                         <div class="repo-pending ${pendingClass}" aria-label="已提交未推送数量">U: ↑${escapeHtml(unpushedCommitCount)}</div>
                         <div class="repo-copy">${escapeHtml(copy)}</div>
                     </div>

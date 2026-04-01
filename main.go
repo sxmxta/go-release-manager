@@ -22,8 +22,8 @@ func main() {
 	// 全局初始化
 	wvApp := wv.Init(nil, nil)
 	wvApp.SetOptions(application.Options{
-		Frameless:          true,
-		DisableResize:      true,
+		Frameless: true,
+		//DisableResize:      true,
 		DisableContextMenu: true,
 		Caption:            "Go Release Manager",
 		DefaultURL:         "fs://energy/index.html",
