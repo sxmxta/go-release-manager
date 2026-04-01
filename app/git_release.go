@@ -658,15 +658,20 @@ func ensureReleaseBranch(repo RepoConfig, scan repoScan) (string, error) {
 	if targetBranch == "" {
 		return "", fmt.Errorf("%s 没有可用的发布分支", repo.Name)
 	}
-	if currentBranch == targetBranch {
-		return targetBranch, nil
+	// 如果需要切换分支
+	if currentBranch != targetBranch {
+		if scan.Dirty {
+			emitOperationLogf("warn", "%s 当前分支 %s 与发布分支 %s 不一致，且存在未提交改动，继续在当前分支发布", repo.Name, currentBranch, targetBranch)
+			return currentBranch, nil
+		}
+		if _, err := runCommand(repo.LocalDir, "git", "checkout", targetBranch); err != nil {
+			return "", fmt.Errorf("%s 切换分支失败：%w", repo.Name, err)
+		}
 	}
-	if scan.Dirty {
-		emitOperationLogf("warn", "%s 当前分支 %s 与发布分支 %s 不一致，且存在未提交改动，继续在当前分支发布", repo.Name, currentBranch, targetBranch)
-		return currentBranch, nil
-	}
-	if _, err := runCommand(repo.LocalDir, "git", "checkout", targetBranch); err != nil {
-		return "", fmt.Errorf("%s 切换分支失败: %w", repo.Name, err)
+	// 切换到目标分支后，拉取最新代码
+	emitOperationLogf("info", "正在从 origin 拉取 %s 分支的最新提交...", targetBranch)
+	if _, err := runCommand(repo.LocalDir, "git", "pull", "origin", targetBranch); err != nil {
+		return "", fmt.Errorf("%s 拉取远端分支失败：%w", repo.Name, err)
 	}
 	return targetBranch, nil
 }
