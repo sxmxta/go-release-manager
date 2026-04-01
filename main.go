@@ -8,10 +8,10 @@ package main
 
 import (
 	"embed"
-	"energy-release/app"
-	_ "energy-release/resources"
 	"github.com/energye/energy/v3/application"
 	"github.com/energye/energy/v3/wv"
+	"github.com/sxmxta/go-release-manager/app"
+	_ "github.com/sxmxta/go-release-manager/resources"
 )
 
 //go:embed resources

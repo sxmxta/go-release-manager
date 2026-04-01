@@ -8,4 +8,4 @@
 
 package resources
 
-import _ "energy-release/resources/metadata"
+import _ "github.com/sxmxta/go-release-manager/resources/metadata"
