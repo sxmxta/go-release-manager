@@ -865,10 +865,24 @@ func createGitTag(dir, tag string) error {
 }
 
 func pushGitTag(dir, tag string) error {
-	if _, err := runCommand(dir, "git", "push", "origin", tag); err != nil {
-		return fmt.Errorf("推送标签 %s 失败: %w", tag, err)
+	const maxRetries = 5
+	var lastErr error
+	for attempt := 1; attempt <= maxRetries; attempt++ {
+		if attempt > 1 {
+			delaySeconds := attempt * 2
+			emitOperationLogf("info", "等待 %d 秒后第 %d 次重试推送标签 %s...", delaySeconds, attempt, tag)
+			time.Sleep(time.Duration(delaySeconds) * time.Second)
+		}
+
+		if _, err := runCommand(dir, "git", "push", "origin", tag); err != nil {
+			lastErr = err
+			emitOperationLogf("warn", "推送标签 %s 失败：%v", tag, err)
+			continue
+		}
+		emitOperationLogf("info", "标签 %s 推送成功", tag)
+		return nil
 	}
-	return nil
+	return fmt.Errorf("推送标签 %s 失败 (已重试 %d 次): %w", tag, maxRetries, lastErr)
 }
 
 func deleteGitTag(dir, tag string) error {
@@ -887,10 +901,24 @@ func deleteRemoteGitTag(dir, tag string) error {
 }
 
 func pushBranchAndTagAtomic(dir, branch, tag string) error {
-	if _, err := runCommand(dir, "git", "push", "--atomic", "origin", branch, tag); err != nil {
-		return fmt.Errorf("原子推送分支 %s 与标签 %s 失败: %w", branch, tag, err)
+	const maxRetries = 5
+	var lastErr error
+	for attempt := 1; attempt <= maxRetries; attempt++ {
+		if attempt > 1 {
+			delaySeconds := attempt * 2
+			emitOperationLogf("info", "等待 %d 秒后第 %d 次重试推送分支 %s 与标签 %s...", delaySeconds, attempt, branch, tag)
+			time.Sleep(time.Duration(delaySeconds) * time.Second)
+		}
+		if _, err := runCommand(dir, "git", "push", "--atomic", "origin", branch, tag); err != nil {
+			lastErr = err
+			emitOperationLogf("warn", "原子推送分支 %s 与标签 %s 失败：%v", branch, tag, err)
+			continue
+		}
+
+		emitOperationLogf("info", "分支 %s 与标签 %s 推送成功", branch, tag)
+		return nil
 	}
-	return nil
+	return fmt.Errorf("原子推送分支 %s 与标签 %s 失败 (已重试 %d 次): %w", branch, tag, maxRetries, lastErr)
 }
 
 func validateTag(tag string) error {
