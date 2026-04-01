@@ -856,6 +856,9 @@ window.onload = () => {
         if (event?.message) {
             lastMessage = event.message;
         }
+        if (event?.action === "create-release" || event?.action === "refresh-repos") {
+            lastSelectedRepo = "";
+        }
         setBusy(false);
         renderReleaseSummary(event);
     }
