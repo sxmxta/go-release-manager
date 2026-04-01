@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ENERGY Release Manager</title>
+  <link rel="stylesheet" href="asset/css/index.css">
+</head>
+<body>
+<div class="app-shell">
+  <header class="title-bar">
+    <div class="title-copy">
+      <div class="title-label">ENERGY Release Manager</div>
+      <div class="title-subtitle">本地 Git 标签联动发布工具</div>
+    </div>
+    <div class="window-buttons">
+      <button class="ghost-icon" id="min" aria-label="最小化"><span aria-hidden="true">-</span></button>
+      <button class="ghost-icon danger" id="close" aria-label="关闭"><span aria-hidden="true">x</span></button>
+    </div>
+  </header>
+
+  <main class="container">
+    <div class="modal-mask" id="addRepoModal">
+      <div class="modal-box">
+        <h4>新增仓库</h4>
+        <p class="modal-copy">先创建仓库条目，再补充本地目录、模块路径和依赖关系。</p>
+        <input class="modal-input" id="newRepoName" placeholder="例如：lcl、cef、wv">
+         <button class="btn primary" id="confirmAddRepo">创建仓库</button>
+         <button class="btn subtle" id="closeAddRepoModal">取消</button>
+      </div>
+    </div>
+
+    <div class="modal-mask" id="gitActionModal">
+      <div class="modal-box modal-box-wide">
+        <h4>Git 提交与推送</h4>
+        <p class="modal-copy">对当前选择的仓库执行常用 Git 操作。提交会先暂存全部改动，再按输入的提交信息执行提交。</p>
+        <div class="form-item">
+          <label for="gitCommitMessage">提交信息</label>
+          <input class="modal-input" id="gitCommitMessage" placeholder="例如：chore: update dependencies">
+        </div>
+        <div class="modal-actions">
+          <button class="btn primary" id="confirmGitCommit">提交当前改动</button>
+          <button class="btn subtle" id="confirmGitPush">推送当前分支</button>
+          <button class="btn subtle" id="closeGitActionModal">关闭</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="modal-mask" id="confirmActionModal">
+      <div class="modal-box modal-box-wide">
+        <h4 id="confirmActionTitle">操作确认</h4>
+        <div class="confirm-body" id="confirmActionBody"></div>
+        <div class="modal-actions confirm-actions">
+          <button class="btn subtle" id="cancelConfirmAction">取消</button>
+          <button class="btn primary" id="confirmActionButton">确认执行</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="content-grid">
+      <div class="busy-mask" id="busyMask">
+        <div class="busy-panel">
+          <div class="busy-spinner"></div>
+          <div class="busy-copy">
+            <div class="busy-text" id="busyText">正在处理，请稍候...</div>
+            <div class="busy-meta" id="busyMeta">关键操作：等待任务开始</div>
+            <div class="busy-step" id="busyStep">当前步骤：等待后台实时日志</div>
+          </div>
+        </div>
+      </div>
+
+      <section class="card repo-card">
+        <div class="card-header">
+          <h3>仓库列表</h3>
+          <p>维护参与联动发布的仓库集合，并查看当前扫描状态。</p>
+        </div>
+        <div class="repo-list" id="repoList"></div>
+        <div class="action-row compact">
+          <button class="btn primary" id="showAddRepo">新增仓库</button>
+          <button class="btn subtle" id="refreshRepos">重新扫描</button>
+        </div>
+      </section>
+
+      <section class="card workspace-card">
+        <div class="card-header">
+          <h3>仓库配置与发布</h3>
+          <p>配置保存到当前项目目录的 <code>config.json</code>，日志只保留在本次运行内存中。</p>
+        </div>
+
+        <div class="workspace-body">
+          <div class="repo-form">
+            <div class="form-item">
+              <label for="repoName">仓库名称</label>
+              <input id="repoName" readonly placeholder="请先选择仓库">
+            </div>
+            <div class="form-item">
+              <label for="modulePath">模块路径</label>
+              <input id="modulePath" placeholder="github.com/energye/lcl">
+            </div>
+            <div class="form-item">
+              <label for="repoUrl">Git 地址</label>
+              <input id="repoUrl" placeholder="https://example.com/repo.git">
+            </div>
+            <div class="form-item">
+              <label for="localDir">本地目录</label>
+              <input id="localDir" placeholder="E:/repo/energy">
+            </div>
+            <div class="form-item">
+              <label for="releaseBranch">发布分支</label>
+              <select id="releaseBranch"></select>
+            </div>
+            <div class="form-item">
+              <label>扫描状态</label>
+              <div class="status-box" id="scanStatus">未选择仓库</div>
+            </div>
+            <div class="form-item form-span-2">
+              <label>上游依赖</label>
+              <div class="dependency-picker" id="dependencyPicker"></div>
+            </div>
+          </div>
+
+          <div class="meta-grid">
+            <div class="meta-item">
+              <span class="meta-label">当前分支</span>
+              <strong class="meta-value" id="currentBranch">-</strong>
+            </div>
+            <div class="meta-item">
+              <span class="meta-label">最新标签</span>
+              <strong class="meta-value" id="latestTag">-</strong>
+            </div>
+            <div class="meta-item">
+              <span class="meta-label">下游数量</span>
+              <strong class="meta-value" id="downstreamCount">0</strong>
+            </div>
+            <div class="meta-item">
+              <span class="meta-label">工作区</span>
+              <strong class="meta-value" id="dirtyState">-</strong>
+            </div>
+          </div>
+
+          <div class="release-row">
+            <div class="form-item">
+              <label for="newTag">新标签</label>
+              <input id="newTag" placeholder="v1.2.3">
+            </div>
+            <label class="checkbox-line" for="pushRemote">
+              <input type="checkbox" id="pushRemote" checked>
+              <span>同时推送到 origin</span>
+            </label>
+            <button class="btn primary" id="saveCurrentRepo">保存配置</button>
+            <button class="btn primary" id="createRelease">创建标签联动下游</button>
+            <button class="btn subtle" id="pushUnpushedTags">推送未推送标签</button>
+          </div>
+
+          <div class="tag-panel">
+            <div class="tag-head">
+              <span>级联影响范围</span>
+              <strong id="impactCount">0 个仓库</strong>
+            </div>
+            <div class="impact-list" id="impactList"></div>
+            <div class="tag-actions">
+              <select id="deleteTagName"></select>
+              <label class="checkbox-line compact" for="deleteRemoteTag">
+                <input type="checkbox" id="deleteRemoteTag">
+                <span>同时删除 origin</span>
+              </label>
+              <button class="btn subtle" id="deleteTag">删除标签</button>
+              <button class="btn subtle" id="runGoModTidy">执行 go mod tidy</button>
+              <button class="btn subtle" id="showGitActionModal">Git 提交/推送</button>
+            </div>
+            <div class="tag-container" id="tagContainer"></div>
+          </div>
+        </div>
+      </section>
+    </div>
+
+    <section class="log-card">
+      <div class="log-head">
+        <strong>执行日志</strong>
+        <div class="release-summary" id="releaseSummary">暂无发布结果</div>
+      </div>
+      <div class="log-box" id="log"></div>
+    </section>
+  </main>
+</div>
+
+<script src="asset/js/index.js"></script>
+</body>
+</html>
