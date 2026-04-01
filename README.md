@@ -1,4 +1,4 @@
-# ENERGY Release Manager
+# Go Release Manager
 
 ---
 
@@ -17,7 +17,7 @@
 
 ## 📖 项目简介
 
-ENERGY Release Manager 是一款专为 Go 多模块项目设计的**自动化版本发布工具**。它通过 Git 标签触发机制，智能处理模块间的依赖关系，实现
+Go Release Manager 是一款专为 Go 多模块项目设计的**自动化版本发布工具**。它通过 Git 标签触发机制，智能处理模块间的依赖关系，实现
 **一次打 tag，自动联动更新所有下游仓库**的现代化发布流程。
 
 ### ✨ 核心特性
