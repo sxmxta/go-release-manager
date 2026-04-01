@@ -1,6 +1,6 @@
 {
-  "name": "energy-release",
-  "egp_name": "energy-release.egp",
+  "name": "go-release-manager",
+  "egp_name": "go-release-manager.egp",
   "package": "app",
   "main": "main.go",
   "gui_render_framework": "WV",
@@ -29,7 +29,7 @@
     "ui_gtk2": true,
     "ui_gtk3": false,
     "output": "./build",
-    "build_file_name": "energy-release",
+    "build_file_name": "go-release-manager",
     "build_mode_debug": true,
     "build_mode_release": false,
     "go_args": "",
@@ -76,8 +76,8 @@
     "depends": ""
   },
   "app_option": {
-    "title": "Release Manager",
-    "id": "yanghy.energy.repomanage",
+    "title": "ReleaseManager",
+    "id": "energy.release.manager",
     "desc": "Tag linkage publishing tool",
     "version": "1.0.0.0",
     "copyright": "Copyright (C) YYYY-YYYY Your Company Name. All rights reserved.",
@@ -107,17 +107,17 @@
     },
     "macos": {
       "PList": {
-        "cf_bundle_executable": "energy-release",
-        "cf_bundle_name": "energy-release",
-        "cf_bundle_display_name": "Release Manager",
+        "cf_bundle_executable": "go-release-manager",
+        "cf_bundle_name": "go-release-manager",
+        "cf_bundle_display_name": "ReleaseManager",
         "cf_bundle_localizations": [
           "zh_CN"
         ],
-        "cf_bundle_identifier": "yanghy.energy.repomanage",
+        "cf_bundle_identifier": "energy.release.manager",
         "cf_bundle_version": "1.0.0.0",
         "cf_bundle_short_version_string": "1.0.0.0",
         "cf_bundle_get_info_string": "Tag linkage publishing tool",
-        "cf_bundle_icon_file": "energy-release.icns",
+        "cf_bundle_icon_file": "go-release-manager.icns",
         "cf_bundle_human_readable_copyright": "Copyright (C) YYYY-YYYY Your Company Name. All rights reserved.",
         "ls_ui_element": 0,
         "ls_minimum_system_version": 0

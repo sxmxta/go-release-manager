@@ -5,17 +5,17 @@
         <key>NSPrincipalClass</key>
         <string>TCrCocoaApplication</string>
         <key>CFBundleExecutable</key>
-        <string>energy-release</string>
+        <string>go-release-manager</string>
         <key>CFBundleName</key>
-        <string>energy-release</string>
+        <string>go-release-manager</string>
         <key>CFBundleDisplayName</key>
-        <string>Release Manager</string>
+        <string>ReleaseManager</string>
         <key>CFBundleLocalizations</key>
         <array>
             <string>zh_CN</string>
         </array>
         <key>CFBundleIdentifier</key>
-        <string>yanghy.energy.repomanage</string>
+        <string>energy.release.manager</string>
         <key>CFBundleVersion</key>
         <string>1.0.0.0</string>
         <key>CFBundleShortVersionString</key>
@@ -23,7 +23,7 @@
         <key>CFBundleGetInfoString</key>
         <string>Tag linkage publishing tool</string>
         <key>CFBundleIconFile</key>
-        <string>energy-release.icns</string>
+        <string>go-release-manager.icns</string>
         <key>NSHumanReadableCopyright</key>
         <string>Copyright (C) YYYY-YYYY Your Company Name. All rights reserved.</string>
         <key>LSUIElement</key>
