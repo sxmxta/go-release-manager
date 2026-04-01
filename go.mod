@@ -1,4 +1,4 @@
-module energy-release
+module github.com/sxmxta/go-release-manager
 
 go 1.20
 
