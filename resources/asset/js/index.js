@@ -52,6 +52,7 @@ window.onload = () => {
         releaseSummary: $("releaseSummary"),
         log: $("log")
     };
+    const splitBar = $("splitBar");
 
     let appState = {
         repos: [],
@@ -65,6 +66,11 @@ window.onload = () => {
     let isBusy = false;
     let busyDescriptor = createIdleBusyDescriptor();
     let pendingConfirmAction = null;
+
+    let isDragging = false;
+    let startY = 0;
+    let startHeight = 0;
+    let startWorkspaceHeight = 0;
 
     function applyState(nextState) {
         appState = {
@@ -912,6 +918,50 @@ window.onload = () => {
     elements.deleteTagName.addEventListener("change", () => {
         lastDeleteTag = elements.deleteTagName.value;
     });
+
+    splitBar.addEventListener("mousedown", (e) => {
+        if (isBusy) return;
+
+        isDragging = true;
+        startY = e.clientY;
+        startHeight = parseInt(getComputedStyle(document.documentElement).getPropertyValue('--bottom-height')) || 146;
+
+        const container = document.querySelector('.container');
+        const workspaceCard = container.querySelector('.workspace-card');
+        startWorkspaceHeight = workspaceCard.getBoundingClientRect().height;
+
+        splitBar.classList.add('dragging');
+        document.body.style.cursor = 'ns-resize';
+        document.body.style.userSelect = 'none';
+
+        e.preventDefault();
+    });
+    document.addEventListener("mousemove", (e) => {
+        if (!isDragging) return;
+
+        const deltaY = startY - e.clientY;
+        let newHeight = startHeight + deltaY;
+
+        // 限制最小和最大高度
+        const minHeight = 100;
+        const maxHeight = window.innerHeight - 200;
+        newHeight = Math.max(minHeight, Math.min(maxHeight, newHeight));
+
+        // 更新 CSS 变量
+        document.documentElement.style.setProperty('--bottom-height', `${newHeight}px`);
+
+        e.preventDefault();
+    });
+
+    document.addEventListener("mouseup", () => {
+        if (isDragging) {
+            isDragging = false;
+            splitBar.classList.remove('dragging');
+            document.body.style.cursor = '';
+            document.body.style.userSelect = '';
+        }
+    });
+
 
     elements.repoList.onclick = (event) => {
         if (isBusy) {

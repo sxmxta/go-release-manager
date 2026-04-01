@@ -145,7 +145,7 @@ select {
     right: var(--frame-padding);
     bottom: var(--frame-padding);
     display: grid;
-    grid-template-rows: minmax(0, 1fr) var(--bottom-height);
+    grid-template-rows: minmax(0, 1fr) auto var(--bottom-height);
     gap: var(--gap);
     overflow: hidden;
 }
@@ -157,6 +157,47 @@ select {
     grid-template-columns: 292px minmax(0, 1fr);
     gap: var(--gap);
     overflow: hidden;
+}
+
+.split-bar {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 8px;
+    cursor: ns-resize;
+    user-select: none;
+    position: relative;
+    z-index: 10;
+    transition: background-color 0.2s;
+}
+
+.split-bar:hover,
+.split-bar.dragging {
+    background: rgba(23, 107, 135, 0.08);
+}
+
+.split-bar-handle {
+    width: 40px;
+    height: 4px;
+    border-radius: 2px;
+    background: var(--border-strong);
+    transition: background-color 0.2s, transform 0.2s;
+}
+
+.split-bar:hover .split-bar-handle,
+.split-bar.dragging .split-bar-handle {
+    background: var(--accent);
+    transform: scaleY(1.2);
+}
+
+.split-bar::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: transparent;
 }
 
 .card,
@@ -363,10 +404,10 @@ select {
     flex: 1;
     min-height: 0;
     padding: 0 14px 14px;
-    display: grid;
-    grid-template-rows: auto auto auto minmax(0, 1fr);
+    display: flex;
+    flex-direction: column;
     gap: 10px;
-    overflow: hidden;
+    overflow-y: auto;
 }
 
 .repo-form {
@@ -563,15 +604,21 @@ select {
 }
 
 .tag-panel {
+    flex: 0 0 auto;
     min-height: 0;
     padding: 10px;
     border: 1px solid var(--border);
     border-radius: var(--radius-md);
     background: var(--panel-soft);
     display: grid;
-    grid-template-rows: auto minmax(48px, auto) auto minmax(0, 1fr);
+    grid-template-rows: auto minmax(48px, auto) auto auto;
     gap: 8px;
-    overflow: hidden;
+    overflow: visible;
+}
+.tag-container {
+    min-height: 0;
+    max-height: 300px;
+    overflow-y: auto;
 }
 
 .tag-head {
