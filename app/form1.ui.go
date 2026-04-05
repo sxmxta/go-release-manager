@@ -4,7 +4,7 @@
 // ==============================================================================
 // 🔍 基本信息
 //     生成工具: ENERGY GUI Designer v1.0.0
-//     生成时间: 2026-03-24 18:43:20
+//     生成时间: 2026-04-05 14:23:22
 //     设计文件: form1.ui
 //     用户文件: form1.go
 //     功能描述: 基于 ENERGY GUI 框架的实现, 包含UI组件创建
@@ -29,6 +29,7 @@ var Form1 TForm1
 
 // FormCreate 窗体创建接口实现. 自动调用
 func (m *TForm1) FormCreate(sender lcl.IObject) {
+	m.TWindow.InternalBeforeFormCreate()
 	// 设置窗体属性
 	m.SetCaption("Form1")
 	m.SetHeight(600)
