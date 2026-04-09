@@ -1,11 +1,11 @@
 module github.com/sxmxta/go-release-manager
 
-go 1.20
+go 1.25.0
 
 require (
-	github.com/energye/energy/v3 v3.0.2
-	github.com/energye/lcl v1.0.1
-	golang.org/x/mod v0.14.0
+	github.com/energye/energy/v3 v3.0.3
+	github.com/energye/lcl v1.0.2
+	golang.org/x/mod v0.34.0
 )
 
 require (
